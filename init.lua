@@ -25,11 +25,39 @@ vim.diagnostic.config({
   underline = true,
 })
 
+-- Completion: nvim-cmp
+local cmp = require("cmp")
+cmp.setup({
+  sources = cmp.config.sources({
+    { name = "nvim_lsp" },
+    { name = "path" },
+  }, {
+    { name = "buffer" },
+  }),
+  mapping = cmp.mapping.preset.insert({
+    ["<C-Space>"] = cmp.mapping.complete(),
+    ["<CR>"]      = cmp.mapping.confirm({ select = true }),
+    ["<Tab>"]     = cmp.mapping.select_next_item(),
+    ["<S-Tab>"]   = cmp.mapping.select_prev_item(),
+  }),
+})
+
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
 -- LSP: TypeScript (native vim.lsp API, requires Neovim 0.11+)
 vim.lsp.config("ts_ls", {
   cmd = { "typescript-language-server", "--stdio" },
   filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
   root_markers = { "tsconfig.json", "package.json", ".git" },
+  capabilities = capabilities,
+  settings = {
+    typescript = {
+      preferences = { includeCompletionsForModuleExports = true },
+    },
+    javascript = {
+      preferences = { includeCompletionsForModuleExports = true },
+    },
+  },
   on_attach = function(_, bufnr)
     local opts = { buffer = bufnr }
     vim.keymap.set("n", "gd",         vim.lsp.buf.definition,   opts)
