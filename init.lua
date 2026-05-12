@@ -1,5 +1,13 @@
 vim.opt.number = true
 
+-- Indentation: 2 spaces, no hard tabs
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.softtabstop = 2
+vim.opt.expandtab = true
+vim.opt.smartindent = true
+vim.opt.autoindent = true
+
 -- Disable built-in file explorer
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
@@ -32,3 +40,24 @@ vim.lsp.config("ts_ls", {
   end,
 })
 vim.lsp.enable("ts_ls")
+
+-- Format on save via Prettier (shell-based, no plugin manager required)
+local prettier_fts = {
+  javascript = true, javascriptreact = true,
+  typescript = true, typescriptreact = true,
+  json = true, jsonc = true,
+  css = true, scss = true, html = true,
+  markdown = true, yaml = true,
+}
+vim.api.nvim_create_autocmd("BufWritePost", {
+  group = vim.api.nvim_create_augroup("PrettierFormat", { clear = true }),
+  callback = function(args)
+    if not prettier_fts[vim.bo[args.buf].filetype] then return end
+    if vim.fn.executable("prettier") == 0 then return end
+    vim.system(
+      { "prettier", "--write", args.file },
+      { text = true },
+      function() vim.schedule(function() vim.cmd.checktime() end) end
+    )
+  end,
+})
