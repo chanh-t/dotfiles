@@ -11,27 +11,17 @@ Setup script for a new MacBook.
 # Install tools
 brew install neovim tmux git ripgrep
 
-# Clone this repo
+# Clone this repo and run bootstrap
 git clone https://github.com/chanh-t/dotfiles.git ~/dotfiles
-
-# Set up Neovim config
-mkdir -p ~/.config/nvim
-cp ~/dotfiles/init.lua ~/.config/nvim/init.lua
-
-# Set up tmux config
-cp ~/dotfiles/.tmux.conf ~/.tmux.conf
-
-# Install Neovim plugins (Telescope + plenary)
-git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/plugins/start/plenary.nvim
-git clone --depth 1 https://github.com/nvim-telescope/telescope.nvim ~/.local/share/nvim/site/pack/plugins/start/telescope.nvim
-
-# Install TypeScript LSP
-npm install -g typescript-language-server typescript
+bash ~/dotfiles/bootstrap.sh
 
 # Add nvim alias (open with "n")
 echo 'alias n="nvim"' >> ~/.zshrc
 source ~/.zshrc
 ```
+
+`bootstrap.sh` copies configs, installs all Neovim plugins (Telescope, nvim-cmp,
+vim-visual-multi), and installs the TypeScript language server.
 
 ## What's included
 
@@ -58,8 +48,19 @@ Activates automatically when opening `.ts` / `.tsx` / `.js` / `.jsx` files.
 
 Errors and warnings appear inline automatically.
 
+**Autocomplete (nvim-cmp)**
+
+Popup appears as you type in any LSP-attached buffer. For TS/JS, accepting a
+completion for an unimported symbol auto-inserts the `import` line.
+
+| Key | Action |
+|-----|--------|
+| `Ctrl+Space` | Trigger completion |
+| `Tab` / `Shift+Tab` | Cycle items |
+| `Enter` | Accept (applies auto-import) |
+
 ## One-liner
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && brew install neovim tmux git ripgrep && git clone https://github.com/chanh-t/dotfiles.git ~/dotfiles && mkdir -p ~/.config/nvim && cp ~/dotfiles/init.lua ~/.config/nvim/init.lua && cp ~/dotfiles/.tmux.conf ~/.tmux.conf && git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/plugins/start/plenary.nvim && git clone --depth 1 https://github.com/nvim-telescope/telescope.nvim ~/.local/share/nvim/site/pack/plugins/start/telescope.nvim && npm install -g typescript-language-server typescript && echo 'alias n="nvim"' >> ~/.zshrc && source ~/.zshrc
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && brew install neovim tmux git ripgrep && git clone https://github.com/chanh-t/dotfiles.git ~/dotfiles && bash ~/dotfiles/bootstrap.sh && echo 'alias n="nvim"' >> ~/.zshrc && source ~/.zshrc
 ```
